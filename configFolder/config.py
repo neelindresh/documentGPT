@@ -17,6 +17,12 @@ EMB_DEPLOYMENT_NAME="LH-embedding"
 EMB_MODEL="text-embedding-ada-002"
 
 
+#Hugginface_T5_Model
+HUGGINFACE_MODEL=None
+HUGGINFACE_MODEL_OFFLOAD=None
+HUGGINFACE_MODEL_PARAMS={}
+
+
 BASE_PATH=os.getcwd()
 MODEL_FOLDER="models"
 EMD_FOLDER="sentenceTransformer"
