@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PDF GPT</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    
+  </head>
+  <style>
+    .ai{
+        color: brown;
+        font-size: larger;
+    }
+    .user{
+        color: blue;
+        font-size: larger;
+    }
+  </style>
+  <body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">
+        KPMG
+      </h1>
+      <p class="subtitle">
+        PDF<strong> GPT</strong>
+      </p>
+    </div>
+  </section>
+  <section class="section">
+	<div class="columns">
+		<div class="column is-8">
+			<input class="input is-primary" type="text" placeholder="Primary input" id="query">
+		</div>
+		<div class="column">
+			<button class="button is-primary" onclick="get_preds()">Query</button>
+		</div>
+        
+
+	</div>
+    <progress class="progress is-danger" max="100" id="progress-bar" style="visibility: hidden;">30%</progress>
+  </section>
+  <section class="section">
+	<div class="container" id="chatbox">
+		
+	</div>
+  </section>
+  </body>
+  <script>
+	const xhr = new XMLHttpRequest()
+	var chat_history=""
+	function get_preds(){
+		xhr.open("POST", "/predict/")
+    //xhr.open("POST", "/predict_data/")
+		//send the Http request
+		text=document.getElementById("query").value
+		chat_history="<p><span class='user'>User: </span>"+text+"</p><hr>"+chat_history
+        document.getElementById("progress-bar").style.visibility="visible"
+		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+		xhr.send(JSON.stringify({"query":text}));
+        
+		//EVENT HANDLERS
+		xhr.onload = function() {
+			if (xhr.status === 200) {
+				data = JSON.parse(xhr.responseText)
+				chat_history="<p><span class='ai'>AI: </span>"+data.result+"</p><a href='"+data.pdf_path+"'>link</a><hr>"+chat_history
+				document.getElementById("chatbox").innerHTML=chat_history
+                document.getElementById("progress-bar").style.visibility="hidden"
+			}
+			else if (xhr.status === 404) {
+			console.log("No records found")
+			}
+		}
+	}
+	
+  </script>
+</html>

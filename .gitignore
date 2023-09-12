@@ -1,0 +1,7 @@
+*.zip
+*.csv
+__pycache__
+storage_*
+*_docs
+models
+.env
