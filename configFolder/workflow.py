@@ -1,4 +1,4 @@
-#EMB_TYPE:  hugginface/OpenAI
+#EMB_TYPE:  hugginface -> local embedding or opensouce Embeddings | OpenAI
 #textSpliter-> CTP: CharacterTextSplitter | RCTP: RecursiveCharacterTextSplitter
 # splitOn-> document: DocumentLevel Splitting with metadata | text: TextLevel Splitting no metadata
 # model->azureopenai: AzureOpenAI services | azurechatopenai: AzureOpenAIChat Services | hugginfaceT5model: Any opensource T5 Model version
@@ -10,7 +10,7 @@ HP_WORKFLOW={
     "chunk_size":512,
     "chunk_overlap":200,
     "EMB_TYPE": "hugginface",
-    "textSpliter":"",
+    "textSpliter":"RCTP",
     "splitOn":"document",
     "model":"azureopenai"
 
@@ -23,7 +23,7 @@ TATA_STEEL_WORKFLOW={
     "chunk_size":1024,
     "chunk_overlap":300,
     "EMB_TYPE": "hugginface",
-    "textSpliter":"",
+    "textSpliter":"CTP",
     "splitOn":"text",
     "model":"azurechatopenai"
 }
@@ -32,14 +32,14 @@ CONTRACT_WORKFLOW={
     "pdf":None,
     "folder":"./contract_docs",
     "persist_directory":"./storage_contract",
-    "chunk_size":1024,
-    "chunk_overlap":300,
+    "chunk_size":512,
+    "chunk_overlap":200,
     "EMB_TYPE": "hugginface",
-    "textSpliter":"",
+    "textSpliter":"CTP",
     "splitOn":"text",
     "model":"azurechatopenai"
 
 }
 
-Workflow=TATA_STEEL_WORKFLOW
+Workflow=CONTRACT_WORKFLOW
 
