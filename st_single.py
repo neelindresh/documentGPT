@@ -13,20 +13,25 @@ from utils.model_loader import MultiDocumentChatAzureOpenAI,SingleChatAzureOpenA
 
 # Set the title for the Streamlit app
 st.title("Llama2 Chat CSV - 🦜🦙")
-
+is_uploaded=False
 # Create a file uploader in the sidebar
 uploaded_file = st.sidebar.file_uploader("Upload File", type="pdf")
-# Handle file upload
-if uploaded_file:
-    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-        tmp_file.write(uploaded_file.getvalue())
-        tmp_file_path = tmp_file.name
-    print("++++++++++++++++++++++{tmp_file_path}+++++++++++++++++++++")
-    model=SingleChatAzureOpenAI(tmp_file_path)
 
+# Handle file upload
+
+if uploaded_file:
+    if not is_uploaded:
+        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+            tmp_file.write(uploaded_file.getvalue())
+            tmp_file_path = tmp_file.name
+        print(f"++++++++++++++++++++++{tmp_file_path}{is_uploaded}+++++++++++++++++++++")
+        model=SingleChatAzureOpenAI(tmp_file_path)
+        is_uploaded=True
+
+    print("Enter in the other part")
     # Load CSV data using CSVLoader
-    loader = PyMuPDFLoader(tmp_file_path)
-    data = loader.load()
+    #loader = PyMuPDFLoader(tmp_file_path)
+    #data = loader.load()
     # Initialize chat history
     if 'history' not in st.session_state:
         st.session_state['history'] = []

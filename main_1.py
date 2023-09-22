@@ -21,53 +21,7 @@ llm = AzureOpenAI(
     temperature=0.3
 )
 
-def extract(text,exception):
-    if exception in text:
-        idx=text.index(exception)
-        text=text[:idx]
-    return text
-     
-def post_processcor(text):
-    text=text.replace("<|im_end|>",'')
-    text=extract(text,"Question: ")
-    text=extract(text,"Use the following pieces of context to answer the question ")
-    text=extract(text,"``` ")
-    return text
-# Run the LLM
-#print(llm("Tell me a joke"))
-'''
-loader = PyPDFDirectoryLoader("data/")
-docs = loader.load()
 
-print(docs[0])
-
-loader = PyPDFLoader("data/Access-Control-Standards_Latest.pdf")
-
-data = loader.load()
-print(data[2].page_content)
-'''
-persist_directory = "./storage"
-
-print("Loading Embeddings")
-#embedding=HuggingFaceEmbeddings(model_name=config.EMD_PATH)
-embedding = OpenAIEmbeddings(
-            openai_api_base=config.api_base,
-            openai_api_key=config.api_key,
-            deployment="LH-embedding",
-            model="text-embedding-ada-002",
-            openai_api_type='azure',
-            chunk_size=1300,
-            )
-print("Embeddings Loaded")
-'''
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=10)
-texts = text_splitter.split_documents(docs)
-vectordb = Chroma.from_documents(documents=texts, 
-                                 embedding=embedding,
-                                 persist_directory=persist_directory)
-
-vectordb.persist()
-'''
 vectordb = Chroma( embedding_function=embedding,persist_directory=persist_directory)
 
 retriever = vectordb.as_retriever(search_kwargs={"k": 3})

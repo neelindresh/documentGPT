@@ -32,7 +32,7 @@ def load_llm_model(self):
 
 '''
 class ModelFactory:
-    def __init__(self,model_type:str):
+    def __init__(self,model_type:str,):
         if model_type=="azurechatopenai":
             self.llm = AzureChatOpenAI(
                 openai_api_base=config.api_base,
@@ -64,20 +64,27 @@ class ModelFactory:
 
 chat_history=[]
 class MultiDocumentChatAzureOpenAI:
-    def __init__(self) -> None:
+    def __init__(self,verbose=False) -> None:
+        if verbose: print("+Loading Model....")
         self.llm=ModelFactory(ACTIVE_WORKFLOW["model"]).get_model()
         
-        
+        if verbose: print("+Loading Embedding....")
         self._load_embedding()
         persist_directory = ACTIVE_WORKFLOW["persist_directory"]
+        
         if not os.path.exists(persist_directory):
-            print("+++++++++++++++++++inside create new DB+++++++++++++++++")
+            if verbose: print("+Loading PDF....")
             data=self._load_pdf_folder()
             #print(data)
+            if verbose: print("+Loading Preprocessor....")
             chunks=self._preprocessor(data)
+            if verbose: print("+Creating VectorDB....")
             docsearch=self._init_db(chunks)
-        docsearch=self._init_db_from_storage()
+        else:
+            if verbose: print("+Loading VectorDB....")
+            docsearch=self._init_db_from_storage()
         template=self._prompt_template()
+        if verbose: print("+Loading QAChain....")
         self._qa(docsearch,template)
         self.chat_history=[]
         
@@ -87,6 +94,8 @@ class MultiDocumentChatAzureOpenAI:
             loader=PyMuPDFLoader(ACTIVE_WORKFLOW["pdf"])
         else:
             loader = PyPDFDirectoryLoader(ACTIVE_WORKFLOW["folder"])
+        if "pages" in ACTIVE_WORKFLOW:
+            return loader.load()[ACTIVE_WORKFLOW["pages"][0]:ACTIVE_WORKFLOW["pages"][1]]
         return loader.load()
     
     def _load_embedding(self):
@@ -231,7 +240,7 @@ class SingleChatAzureOpenAI:
             docsearch = Chroma.from_texts(data, self.embeddings,)
         elif ACTIVE_WORKFLOW["splitOn"]=="document":
             docsearch = Chroma.from_texts(data, self.embeddings)
-        docsearch = Chroma.from_texts(data, self.embeddings)
+        #docsearch = Chroma.from_texts(data, self.embeddings)
         return docsearch
         
     

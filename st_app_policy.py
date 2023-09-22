@@ -7,18 +7,16 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.llms import CTransformers
 from langchain.chains import ConversationalRetrievalChain
-from configFolder import config,workflow
+from configFolder import config
 from langchain.llms import AzureOpenAI
 from utils import model_loader,helper
 # Define the path for generated embeddings
+DB_FAISS_PATH = 'vectorstore/db_faiss'
 
-
-st.title("FinePrint")
-model=model_loader.MultiDocumentChatAzureOpenAI()
+st.title("Poilcy Bot")
 #model=model_loader.ConversationMultiDocumentAzureOpenAI()
-#model=model_loader.ConversationAzureOpenAI()
+model=model_loader.ConversationAzureOpenAI()
 # Initialize chat history
-print(workflow.Workflow)
 if 'history' not in st.session_state:
     st.session_state['history'] = []
 
@@ -40,13 +38,12 @@ with container:
         submit_button = st.form_submit_button(label='Send')
 
     if submit_button and user_input:
-        output,info = model.predict(user_input)
-        print(info)
+        output = model.predict(user_input)
+        #print(info)
         print(output)
         output=helper.post_processcor(output)
         output=output.replace('"""',"")
         output=output.replace('# text =',"")
-        output=output.replace('# ',"")
         st.session_state['past'].append(user_input)
         st.session_state['generated'].append(output)
 

@@ -3,5 +3,9 @@
 __pycache__
 storage_*
 *_docs
-models
+models/
 .env
+storage
+*.txt
+.chroma
+.chainlit

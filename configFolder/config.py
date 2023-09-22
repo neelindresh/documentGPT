@@ -25,7 +25,8 @@ HUGGINFACE_MODEL_PARAMS={}
 
 BASE_PATH=os.getcwd()
 MODEL_FOLDER="models"
-EMD_FOLDER="sentenceTransformer"
+EMD_FOLDER="E5-base-v2"
 EMD_PATH=os.path.join(BASE_PATH,MODEL_FOLDER,EMD_FOLDER)
+#EMD_PATH="intfloat/e5-base-v2"
 DATA_FOLDER="data"
 DATA_PATH=os.path.join(BASE_PATH,DATA_FOLDER)
