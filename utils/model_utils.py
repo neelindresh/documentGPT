@@ -9,6 +9,11 @@ from dataclasses import asdict
 
 from utils import pdf_utils
 from config import OpenAIConfig
+'''
+__import__('pysqlite3')
+import sys
+sys.modules['pysqlite3']= sys.modules.pop('pysqlite3')
+'''
 
 class Embeddings:
     def __init__(self,name) -> None:
@@ -30,7 +35,7 @@ class ConvertToVector:
 class LLMmodel:
     def __init__(self,embeddings,db_name) -> None:
         self.embeddings=Embeddings(embeddings).load()
-        self.llm=AzureChatOpenAI(**asdict(OpenAIConfig()))
+        self._set_llm()
         self.vectordb=Chroma(embedding_function=self.embeddings,persist_directory=db_name)
         self.retriver=self.vectordb.as_retriever()
         self.chat_history=ChatMessageHistory()
@@ -46,7 +51,12 @@ class LLMmodel:
             Helpful Answer:"""
         self.custom_rag_prompt = PromptTemplate.from_template(template)
         self.rag_chain=self.custom_rag_prompt | self.llm
-
+    def _set_llm(self,params=None):
+        configarations=asdict(OpenAIConfig())
+        if params:
+            configarations.update(params)
+        self.llm=AzureChatOpenAI(**configarations)
+        
     def predict(self,query):
         self.chat_history.add_user_message(query)
         data=self.retriver.invoke(query)
@@ -63,11 +73,17 @@ class LLMmodel:
 class LLMmodelV1:
     def __init__(self,embeddings,db_name) -> None:
         self.embeddings=Embeddings(embeddings).load()
-        self.llm=AzureChatOpenAI(**asdict(OpenAIConfig()))
+        self._set_llm()
+        
         self._set_vdb(db_name)
         
         
-        
+    def _set_llm(self,params=None):
+        configarations=asdict(OpenAIConfig())
+        if params:
+            configarations.update(params)
+        self.llm=AzureChatOpenAI(**configarations)
+
     def _set_chat_history(self):
         self.chat_history=ChatMessageHistory()
         system_prompt='''Use the following pieces of context to answer the question at the end.
@@ -110,7 +126,10 @@ class LLMmodelV1:
         self.chat_history.add_user_message(query_formatted)
         responce=self.rag_chain.invoke({"messages": self.chat_history.messages})
         self.chat_history.add_ai_message(responce)
+        template=f'Given the context \n{context} \n and Question: {query} \n Responce {responce.content}. Give me 3 related questions on this'
+        followup_qa=self.llm.invoke(template)
         return {
             "responce":responce.content,
-            "info":info_list
+            "info":info_list,
+            "followup":followup_qa.content.split('\n')
         }

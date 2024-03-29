@@ -26,6 +26,8 @@ async def create_upload_file(file: UploadFile):
 
 @app.post('/getresponce/')
 async def get_responce(query:dict):
+    if 'params' in query:
+        model._set_llm(query['params'])
     if 'filename' in query:
         if query['filename']:
             model._set_vdb(os.path.join(vectordb_store_path,query['filename']))
