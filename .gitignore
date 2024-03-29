@@ -6,6 +6,5 @@ storage_*
 models/
 .env
 storage
-*.txt
 .chroma
 .chainlit
