@@ -1,4 +1,6 @@
 from fastapi import FastAPI, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+
 import os
 
 
@@ -11,6 +13,14 @@ from dataclasses import asdict
 from config import AzureDocumentInfo
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 file_upload_path=os.path.join("TBD","file_uploads")
 vectordb_store_path=os.path.join("TBD","vectordb")
 emd_name="intfloat/e5-base-v2"
