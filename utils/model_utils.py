@@ -142,6 +142,15 @@ class LLMmodelV1:
         data=self.retriver.invoke(query)
         context="\n\n".join([d.page_content for d in data])
         info_list=[d.metadata for d in data]
+        unique = dict()
+        for item in info_list:
+            # concatenate key
+            key = f"{item['path']}{item['page']}"
+            # only add the value to the dictionary if we do not already have an item with this key
+            if not key in unique:
+                unique[key] = item
+        info_list=list(unique.values())
+                
         #format Question
         query_formatted=f'''
         {context}
