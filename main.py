@@ -59,5 +59,6 @@ async def all_databases():
 
 @app.get("/download/{filename}")
 async def dowload(filename:str):
+    print(filename)
     file_path=os.path.join(file_upload_path,filename)
     return FileResponse(path=file_path, filename=file_path, media_type='text/pdf')

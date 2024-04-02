@@ -89,6 +89,7 @@ class LLMmodel:
         info_list=[d.metadata for d in data]
         responce=self.rag_chain.invoke({"question":query,"context":context})
         self.chat_history.add_ai_message(responce)
+        print([{"page":m['page'],"path":m["path"].split("/")[-1]} for m in info_list])
         return {
             "responce":responce.content,
             "info":[{"page":m['page'],"path":m["path"].split("/")[-1]} for m in info_list]
