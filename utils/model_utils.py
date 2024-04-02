@@ -41,8 +41,7 @@ class ConvertToVector:
             for idx,doc in enumerate(file_names):
                 data=self.azure_forms.pdf_formatter(doc,original_path=path)
                 docs.extend(data)
-                if idx==2:
-                    break
+                
         else:
             docs=pdf_utils.process(path)
         
