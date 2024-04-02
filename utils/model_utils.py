@@ -14,11 +14,11 @@ import os
 from utils import pdf_utils
 from config import OpenAIConfig
 
-'''
+
 __import__('pysqlite3')
 import sys
 sys.modules['sqlite3']= sys.modules.pop('pysqlite3')
-'''
+
 
 class Embeddings:
     def __init__(self,name) -> None:
