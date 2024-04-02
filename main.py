@@ -1,4 +1,6 @@
 from fastapi import FastAPI, UploadFile
+from fastapi.responses import FileResponse
+
 from fastapi.middleware.cors import CORSMiddleware
 
 import os
@@ -27,6 +29,7 @@ emd_name="intfloat/e5-base-v2"
 azure_form= AzureDocIntell(**asdict(AzureDocumentInfo()))
 vectorizer=ConvertToVector("intfloat/e5-base-v2",azure_form)
 model=LLMmodelV1(embeddings=emd_name,db_name=os.path.join(vectordb_store_path,'DUMMY'))
+
 @app.post("/uploadfile/{idx}")
 async def create_upload_file(file: UploadFile,idx:str):
     
@@ -52,3 +55,9 @@ async def get_responce(query:dict):
 @app.get("/all_databases/")
 async def all_databases():
     return [i for i in os.listdir(vectordb_store_path)]
+
+
+@app.get("/download/{filename}")
+async def dowload(filename:str):
+    file_path=os.path.join(file_upload_path,filename)
+    return FileResponse(path=file_path, filename=file_path, media_type='text/pdf')

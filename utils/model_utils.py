@@ -14,11 +14,11 @@ import os
 from utils import pdf_utils
 from config import OpenAIConfig
 
-
+'''
 __import__('pysqlite3')
 import sys
 sys.modules['sqlite3']= sys.modules.pop('pysqlite3')
-
+'''
 
 class Embeddings:
     def __init__(self,name) -> None:
@@ -91,13 +91,14 @@ class LLMmodel:
         self.chat_history.add_ai_message(responce)
         return {
             "responce":responce.content,
-            "info":info_list
+            "info":[{"page":m['page'],"path":m["path"].split("/")[-1]} for m in info_list]
         }
         
         
 class LLMmodelV1:
     def __init__(self,embeddings,db_name) -> None:
         self.embeddings=Embeddings(embeddings).load()
+        self.last_idx=db_name
         self._set_llm()
         
         self._set_vdb(db_name)
@@ -127,10 +128,12 @@ class LLMmodelV1:
         self.rag_chain=self.custom_rag_prompt | self.llm
         
     def _set_vdb(self,name):
-        self.vectordb=Chroma(embedding_function=self.embeddings,persist_directory=name)
-        self.retriver=self.vectordb.as_retriever(search_kwargs={'k':10})
-        
-        self._set_chat_history()
+        if name!=self.last_idx:
+            self.vectordb=Chroma(embedding_function=self.embeddings,persist_directory=name)
+            self.retriver=self.vectordb.as_retriever(search_kwargs={'k':10})
+            self.last_idx=name
+            self._set_chat_history()
+            
         
     
     def predict(self,query):
