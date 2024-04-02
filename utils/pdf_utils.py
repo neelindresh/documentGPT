@@ -1,7 +1,8 @@
 import fitz 
 import pandas as pd
 from langchain_core.documents.base import Document
-
+import os
+import shutil
 def convert_to_langchain_docs(docs):
     document_format=[]
     for doc in docs:
@@ -98,3 +99,76 @@ def extract_doc(docs,doc_name:str,clean:bool=True):
                 "block":p
             })
     return data_format
+
+
+
+def check_if_scanned(page: str,threshold:float=0.05) -> tuple:
+    """
+    Calculate the percentage of document that is covered by (searchable) text.
+
+    If the returned percentage of text is very low, the document is
+    most likely a scanned PDF
+    """
+    total_page_area = 0.0
+    total_text_area = 0.0
+
+    
+    total_page_area = total_page_area + abs(page.rect)
+    text_area = 0.0
+    for b in page.get_text_blocks():
+        x0,y0,x1,y1,text,block_id,block_type=b
+        if not text.startswith("<image"):
+            r = fitz.Rect(b[x0,y0,x1,y1])  # rectangle where block text appears
+            text_area = text_area + abs(r)
+    total_text_area = total_text_area + text_area
+    text_perc=total_text_area / total_page_area
+    return text_perc < threshold, text_perc
+def check_if_scanned_full_doc(path: str,threshold=0.05) -> float:
+    """
+    Calculate the percentage of document that is covered by (searchable) text.
+
+    If the returned percentage of text is very low, the document is
+    most likely a scanned PDF
+    """
+    total_page_area = 0.0
+    total_text_area = 0.0
+    
+    doc = fitz.open(path)
+
+    for page_num, page in enumerate(doc):
+        total_page_area = total_page_area + abs(page.rect)
+        text_area = 0.0
+        for b in page.get_text_blocks():
+            x0,y0,x1,y1,text,block_id,block_type=b
+            if not text.startswith("<image"):
+                r = fitz.Rect(b[:4])  # rectangle where block text appears
+                text_area = text_area + abs(r)
+        total_text_area = total_text_area + text_area
+    doc.close()
+    text_perc=total_text_area / total_page_area
+    return text_perc < threshold, text_perc
+
+def convert_to_doc_intell_pdf_format(pdf_file:str,pages=None,out_dir="temp"):
+    doc1 = fitz.open(pdf_file)
+    if not os.path.exists(out_dir):
+        os.mkdir(out_dir)
+    else:
+        shutil.rmtree(out_dir)
+        os.mkdir(out_dir)
+    # Create a new empty PDF document
+    filenames=[]
+    if pages is None:
+        # Insert the first 2 pages of doc1 into doc2
+        for p in range(len(doc1)):
+            doc2 = fitz.open()
+            doc2.insert_pdf(doc1, to_page=p+1,from_page=p)
+            
+            # Save the modified document as "first-and-last-10.pdf"
+            fname=f"{out_dir}/_temp_pdf_{p}.pdf"
+            doc2.save(fname)
+            filenames.append(fname)
+            
+            
+    ## Implement if pages are given
+    
+    return filenames

@@ -6,13 +6,18 @@ from langchain.memory import ChatMessageHistory
 from langchain_core.prompts import PromptTemplate
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from dataclasses import asdict
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.formrecognizer import DocumentAnalysisClient
+import os
+
 
 from utils import pdf_utils
 from config import OpenAIConfig
+
 '''
 __import__('pysqlite3')
 import sys
-sys.modules['pysqlite3']= sys.modules.pop('pysqlite3')
+sys.modules['sqlite3']= sys.modules.pop('pysqlite3')
 '''
 
 class Embeddings:
@@ -22,13 +27,34 @@ class Embeddings:
         return HuggingFaceEmbeddings(model_name=self.name)
     
 class ConvertToVector:
-    def __init__(self,embeddings) -> None:
+    def __init__(self,embeddings,azure_forms) -> None:
         self.embeddings=Embeddings(embeddings).load()
+        self.azure_forms=azure_forms
         
-    def convert_to_vector(self,path,store_path):
-        docs=pdf_utils.process(path)
+    def convert_to_vector(self,path,path_tovector_store,store_name):
+        scanned_flag,_=pdf_utils.check_if_scanned_full_doc(path=path)
+        if scanned_flag:
+            print("Entered Into Scanned")
+            file_names=pdf_utils.convert_to_doc_intell_pdf_format(path)
+            docs=[]
+
+            for idx,doc in enumerate(file_names):
+                data=self.azure_forms.pdf_formatter(doc,original_path=path)
+                docs.extend(data)
+                if idx==2:
+                    break
+        else:
+            docs=pdf_utils.process(path)
+        
         document_format=pdf_utils.convert_to_langchain_docs(docs)
-        vdb=Chroma.from_documents(document_format,embedding=self.embeddings,persist_directory=store_path.strip('.pdf'))
+        vdb_path=os.path.join(path_tovector_store,store_name)
+        if os.path.exists(vdb_path):
+            print("ENter Here")
+            vdb=Chroma(embedding_function=self.embeddings,persist_directory=vdb_path)
+            vdb=vdb.from_documents(document_format,embedding=self.embeddings,persist_directory=vdb_path)
+            
+        else:
+            vdb=Chroma.from_documents(document_format,embedding=self.embeddings,persist_directory=vdb_path)
         vdb.persist()
         
         
@@ -103,7 +129,7 @@ class LLMmodelV1:
         
     def _set_vdb(self,name):
         self.vectordb=Chroma(embedding_function=self.embeddings,persist_directory=name)
-        self.retriver=self.vectordb.as_retriever()
+        self.retriver=self.vectordb.as_retriever(search_kwargs={'k':10})
         
         self._set_chat_history()
         
@@ -133,3 +159,33 @@ class LLMmodelV1:
             "info":info_list,
             "followup":followup_qa.content.split('\n')
         }
+        
+
+
+
+class AzureDocIntell:
+    def __init__(self,api_key,end_point):
+        credential = AzureKeyCredential(api_key)
+        self.document_analysis_client = DocumentAnalysisClient(end_point, credential)
+        
+    def pdf_formatter(self,pdf,original_path):
+        print(pdf)
+        with open(pdf, "rb") as f:
+            poller = self.document_analysis_client.begin_analyze_document(
+                "prebuilt-layout", document=f
+            )
+        result = poller.result()
+        data=[]
+        for page in result.paragraphs:
+            try:
+                _temp={}
+                _temp['block']=page.content
+                _temp['page_no']=[b.page_number for b in page.bounding_regions][0]
+                _temp['doc_name']=original_path
+                data.append(_temp)
+            except Exception as e:
+                print(e)
+                
+        return data
+    
+    

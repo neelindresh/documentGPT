@@ -2,24 +2,28 @@ from fastapi import FastAPI, UploadFile
 import os
 
 
-from utils.model_utils import ConvertToVector,LLMmodel,LLMmodelV1
+from utils.model_utils import ConvertToVector,LLMmodel,LLMmodelV1,AzureDocIntell
 from pydantic import BaseModel
 
 from typing import Optional, Type, Any, Tuple
+from dataclasses import asdict
 
+from config import AzureDocumentInfo
 
 app = FastAPI()
 file_upload_path=os.path.join("TBD","file_uploads")
 vectordb_store_path=os.path.join("TBD","vectordb")
 emd_name="intfloat/e5-base-v2"
-vectorizer=ConvertToVector("intfloat/e5-base-v2")
+azure_form= AzureDocIntell(**asdict(AzureDocumentInfo()))
+vectorizer=ConvertToVector("intfloat/e5-base-v2",azure_form)
 model=LLMmodelV1(embeddings=emd_name,db_name=os.path.join(vectordb_store_path,'DUMMY'))
-@app.post("/uploadfile/")
-async def create_upload_file(file: UploadFile):
+@app.post("/uploadfile/{idx}")
+async def create_upload_file(file: UploadFile,idx:str):
+    
     contents = file.file.read()
     with open(os.path.join(file_upload_path,file.filename), 'wb') as f:
         f.write(contents)
-    vectorizer.convert_to_vector(os.path.join(file_upload_path,file.filename),os.path.join(vectordb_store_path,file.filename))
+    vectorizer.convert_to_vector(os.path.join(file_upload_path,file.filename),vectordb_store_path,idx)
     
     return {"filename": file.filename}
 

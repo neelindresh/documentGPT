@@ -7,3 +7,7 @@ class OpenAIConfig:
     azure_deployment:str="test"
     api_version:str="2024-02-15-preview"
 
+@dataclass
+class AzureDocumentInfo:
+    api_key:str='f8c8e2179f44484c872de1bd373c17c0'
+    end_point:str='https://spendanalytics.cognitiveservices.azure.com/'

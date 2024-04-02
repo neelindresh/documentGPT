@@ -1,8 +1,8 @@
-'''
+
 import requests
 
-url = 'http://127.0.0.1:8000/uploadfile'
-file = {'file': open('Profile.pdf', 'rb')}
+url = 'http://127.0.0.1:8000/uploadfile/ResumeParser'
+file = {'file': open('Karnataka Renewable.pdf', 'rb')}
 resp = requests.post(url=url, files=file) 
 print(resp.json())
 
@@ -17,3 +17,4 @@ for i in ["who is indresh",'what is his full name',"what are his skills","what i
     resp = requests.post(url=url,json=data) 
     print(resp.json())
     time.sleep(10)
+'''
