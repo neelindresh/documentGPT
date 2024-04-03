@@ -166,9 +166,18 @@ class LLMmodelV1:
         self.chat_history.add_ai_message(responce)
         template=f'Given the context \n{context} \n and Question: {query} \n Responce {responce.content}. Give me 3 related questions on this'
         followup_qa=self.llm.invoke(template)
+        
+        pdf_name_mapping={'az1742-2018.pdf':'Solar Photovoltic (PV) System Components.pdf',
+                          '6981.pdf':"Photovoltics: Basic Design Princicals and Components.pdf",
+                          'BOOK3.pdf':"Solar Photovoltics Technology and Systems.pdf"
+                          }
+        info_list=[{"page":m['page'],"path":m["path"].split("/")[-1]} for m in info_list]
+        for idx,s in enumerate(info_list):
+            if s["path"] in pdf_name_mapping:
+                info_list[idx]["path"]=pdf_name_mapping[s["path"]]
         return {
             "responce":responce.content,
-            "info":[{"page":m['page'],"path":m["path"].split("/")[-1]} for m in info_list],
+            "info":info_list,
             "followup":followup_qa.content.split('\n')
         }
         

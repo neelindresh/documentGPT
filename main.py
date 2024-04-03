@@ -59,6 +59,12 @@ async def all_databases():
 
 @app.get("/download/{filename}")
 async def dowload(filename:str):
-    print(filename)
+    pdf_name_mapping={'az1742-2018.pdf':'Solar Photovoltic (PV) System Components.pdf',
+                          '6981.pdf':"Photovoltics: Basic Design Princicals and Components.pdf",
+                          'BOOK3.pdf':"Solar Photovoltics Technology and Systems.pdf"
+                          }
+    reverse_mapping={v:k for k,v in pdf_name_mapping.items()}
+    if filename in reverse_mapping:
+        filename=reverse_mapping[filename]
     file_path=os.path.join(file_upload_path,filename)
     return FileResponse(path=file_path, filename=file_path, media_type='text/pdf')
