@@ -175,6 +175,8 @@ class LLMmodelV1:
         for idx,s in enumerate(info_list):
             if s["path"] in pdf_name_mapping:
                 info_list[idx]["path"]=pdf_name_mapping[s["path"]]
+                
+        print(info_list)
         return {
             "responce":responce.content,
             "info":info_list,
