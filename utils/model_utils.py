@@ -268,12 +268,14 @@ class CompartiveAnalysis:
         - Please only Use the context provided to you.
         - Do a Comparison between diffent company
         
-        Chat History:
-        {chathistory}
+        
         
         Context:
         {doc}
 
+        Chat History:
+        {chathistory}
+        
         query:
         {query}
         """,
