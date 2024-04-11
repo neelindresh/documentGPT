@@ -252,7 +252,7 @@ class CompartiveAnalysis:
             if 'Name/Company' in r.metadata:
                 company_name=r.metadata['Name/Company']
             
-        return context,company_name
+        return context,[{"path":r.metadata['source'],"page":r.metadata['page']} for r in results]
 
 
     def info_extractor(self,context,query,chathistory):
@@ -294,14 +294,24 @@ class CompartiveAnalysis:
         
         all_context=self.do_search(query)
         print(all_context)
-        context,_=self.make_context(all_context)
+        context,info_list=self.make_context(all_context)
         history=self.convert_to_string(self.chat_history)
         out=self.info_extractor(context,query,history)
         self.chat_history.add_user_message(query)
         self.chat_history.add_ai_message(out)
+        unique = dict()
+        for item in info_list:
+            # concatenate key
+            key = f"{item['path']}{item['page']}"
+            # only add the value to the dictionary if we do not already have an item with this key
+            if not key in unique:
+                unique[key] = item
+        info_list=list(unique.values())
+        info_list=[{"page":m['page'],"path":m["path"].split("/")[-1]} for m in info_list]
+        
         return {
             "output":out,
             "metadata":{
-                "sources":[]
+                "sources":info_list
             }
         }
