@@ -308,10 +308,12 @@ class CompartiveAnalysis:
                 unique[key] = item
         info_list=list(unique.values())
         info_list=[{"page":m['page'],"path":m["path"].split("/")[-1]} for m in info_list]
-        
+        template=f'Given the context \n{context} \n and Question: {query} \n Responce {out}. Give me 3 related questions on this'
+        followup_qa=self.llm.invoke(template)
         return {
             "output":out,
             "metadata":{
-                "sources":info_list
+                "sources":info_list,
+                "followup":followup_qa.content.split('\n')
             }
         }

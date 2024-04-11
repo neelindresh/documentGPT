@@ -37,8 +37,8 @@ async def create_upload_file(file: UploadFile,idx:str):
     contents = file.file.read()
     with open(os.path.join(file_upload_path,file.filename), 'wb') as f:
         f.write(contents)
-    vectorizer.convert_to_vector(os.path.join(file_upload_path,file.filename),vectordb_store_path,idx)
     
+    vectorizer.convert_to_vector(os.path.join(file_upload_path,file.filename),vectordb_store_path,idx)
     return {"filename": file.filename}
 
 
