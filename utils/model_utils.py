@@ -9,16 +9,18 @@ from dataclasses import asdict
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
 import os
-
+import json
 
 from utils import pdf_utils
-from config import OpenAIConfig
+from config import OpenAIConfig, ChromaClient
 
-
+'''
 __import__('pysqlite3')
 import sys
 sys.modules['sqlite3']= sys.modules.pop('pysqlite3')
-
+'''
+import chromadb
+from chromadb.config import Settings
 
 class Embeddings:
     def __init__(self,name) -> None:
@@ -212,3 +214,80 @@ class AzureDocIntell:
         return data
     
     
+    
+class CompartiveAnalysis:
+
+    def __init__(self,embeddings,db_name) -> None:
+        self.embeddings=Embeddings(embeddings).load()
+        self.last_idx=db_name
+        self._set_llm()
+        self.data_sources={"SAIL":"docs/SAIL Transcript Q3 FY24.pdf","tata":"docs/TATA STEELS 3qfy24-transcript-v7.pdf"}
+        self.client = chromadb.HttpClient(**asdict(ChromaClient()))
+
+    def _set_llm(self,params=None):
+        configarations=asdict(OpenAIConfig())
+        if params:
+            configarations.update(params)
+        self.llm=AzureChatOpenAI(**configarations)
+        
+    def do_search(self,query):
+        all_context=[]
+        context_by_file={}
+        #Serch and compare
+        for doc in self.data_sources:
+
+            vdb=Chroma(embedding_function=self.embeddings,persist_directory=self.last_idx,collection_name=doc,client=self.client)
+            result=vdb.similarity_search(query,k=5,)
+            all_context.extend(result)
+            context_by_file[doc]=result
+        return all_context
+    
+    def make_context(self,results):
+        context=""
+        company_name=""
+        for r in results:
+            context+="DocInfo: "+json.dumps(r.metadata)+ "\n"
+            context+="DocContent: "+r.page_content+ "\n-------------\n"
+            if 'Name/Company' in r.metadata:
+                company_name=r.metadata['Name/Company']
+            print(company_name)
+        return context,company_name
+
+
+    def info_extractor(self,context,query):
+        prompt=PromptTemplate.from_template("""
+        Use the following pieces of context to answer the question at the end. Give full details about th topic
+        If you don't know the answer, just say that you don't know, don't try to make up an answer.
+
+        Information is provided in the following format 
+        DocInfo : General Information on the document
+        DocContent: Actual data from the document
+
+        NOTE: 
+        - Please only Use the context provided to you.
+        - Do a Comparison between diffent company
+        
+        
+        Context:
+        {doc}
+
+        query:
+        {query}
+        """,
+        )
+
+        chain = prompt | self.llm
+        out=chain.invoke({"doc":context,"query":query})
+        return out.content
+    
+    
+    def predict(self,query):
+        all_context=self.do_search(query)
+        context,_=self.make_context(all_context)
+        out=self.info_extractor(context,query)
+        return {
+            "output":out,
+            "metadata":{
+                "sources":[]
+            }
+        }

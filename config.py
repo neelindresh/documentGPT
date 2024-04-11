@@ -11,3 +11,9 @@ class OpenAIConfig:
 class AzureDocumentInfo:
     api_key:str='f8c8e2179f44484c872de1bd373c17c0'
     end_point:str='https://spendanalytics.cognitiveservices.azure.com/'
+    
+    
+@dataclass
+class ChromaClient:
+    host:str="http://20.41.249.147:6062"
+    port:int=8000

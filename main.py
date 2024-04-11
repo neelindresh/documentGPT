@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 
 
-from utils.model_utils import ConvertToVector,LLMmodel,LLMmodelV1,AzureDocIntell
+from utils.model_utils import ConvertToVector,LLMmodel,LLMmodelV1,AzureDocIntell,CompartiveAnalysis
 from pydantic import BaseModel
 
 from typing import Optional, Type, Any, Tuple
@@ -30,6 +30,7 @@ azure_form= AzureDocIntell(**asdict(AzureDocumentInfo()))
 vectorizer=ConvertToVector("intfloat/e5-base-v2",azure_form)
 model=LLMmodelV1(embeddings=emd_name,db_name=os.path.join(vectordb_store_path,'DUMMY'))
 
+comarative_analysis=CompartiveAnalysis(embeddings=emd_name,db_name="CompetetorRag")
 @app.post("/uploadfile/{idx}")
 async def create_upload_file(file: UploadFile,idx:str):
     
@@ -68,3 +69,10 @@ async def dowload(filename:str):
         filename=reverse_mapping[filename]
     file_path=os.path.join(file_upload_path,filename)
     return FileResponse(path=file_path, filename=file_path, media_type='text/pdf')
+
+
+@app.post('/getcomparative/')
+async def getcomparative(query:dict):
+    
+    out=comarative_analysis.predict(query['query'])
+    return out

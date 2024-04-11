@@ -1,8 +1,8 @@
 
 import requests
 
-url = 'http://127.0.0.1:8000/uploadfile/ResumeParser'
-file = {'file': open('Karnataka Renewable.pdf', 'rb')}
+url = 'http://20.41.249.147:6061/uploadfile/US123'
+file = {'file': open('HPCL’s Q4 & FY Results 2022-23 .pdf', 'rb')}
 resp = requests.post(url=url, files=file) 
 print(resp.json())
 
