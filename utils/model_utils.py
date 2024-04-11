@@ -314,6 +314,7 @@ class CompartiveAnalysis:
             "output":out,
             "metadata":{
                 "sources":info_list,
-                "followup":followup_qa.content.split('\n')
-            }
+                
+            },
+            "followup":followup_qa.content.split('\n')
         }
