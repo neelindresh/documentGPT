@@ -223,6 +223,7 @@ class CompartiveAnalysis:
         self._set_llm()
         self.data_sources={"SAIL":"docs/SAIL Transcript Q3 FY24.pdf","tata":"docs/TATA STEELS 3qfy24-transcript-v7.pdf"}
         self.client = chromadb.HttpClient(**asdict(ChromaClient()))
+        self.chat_history=ChatMessageHistory()
 
     def _set_llm(self,params=None):
         configarations=asdict(OpenAIConfig())
@@ -254,7 +255,7 @@ class CompartiveAnalysis:
         return context,company_name
 
 
-    def info_extractor(self,context,query):
+    def info_extractor(self,context,query,chathistory):
         prompt=PromptTemplate.from_template("""
         Use the following pieces of context to answer the question at the end. Give full details about th topic
         If you don't know the answer, just say that you don't know, don't try to make up an answer.
@@ -267,6 +268,8 @@ class CompartiveAnalysis:
         - Please only Use the context provided to you.
         - Do a Comparison between diffent company
         
+        Chat History:
+        {chathistory}
         
         Context:
         {doc}
@@ -277,14 +280,22 @@ class CompartiveAnalysis:
         )
 
         chain = prompt | self.llm
-        out=chain.invoke({"doc":context,"query":query})
+        out=chain.invoke({"doc":context,"query":query,"chathistory":chathistory})
         return out.content
-    
+    def convert_to_string(self,history,n=2):
+        text=""
+        for m in history.dict()['messages'][-n:]:
+            text+=f"{m['type']} : {m['content']}\n"
+        return text
     
     def predict(self,query):
+        
         all_context=self.do_search(query)
         context,_=self.make_context(all_context)
-        out=self.info_extractor(context,query)
+        history=self.convert_to_string(self.chat_history)
+        out=self.info_extractor(context,query,history)
+        self.chat_history.add_user_message(query)
+        self.chat_history.add_ai_message(out)
         return {
             "output":out,
             "metadata":{

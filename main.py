@@ -30,7 +30,7 @@ azure_form= AzureDocIntell(**asdict(AzureDocumentInfo()))
 vectorizer=ConvertToVector("intfloat/e5-base-v2",azure_form)
 model=LLMmodelV1(embeddings=emd_name,db_name=os.path.join(vectordb_store_path,'DUMMY'))
 
-comarative_analysis=CompartiveAnalysis(embeddings=emd_name,db_name="CompetetorRag")
+comarative_analysis=CompartiveAnalysis(embeddings=emd_name,db_name="CompetetorRagV1")
 @app.post("/uploadfile/{idx}")
 async def create_upload_file(file: UploadFile,idx:str):
     
