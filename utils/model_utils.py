@@ -251,7 +251,7 @@ class CompartiveAnalysis:
             context+="DocContent: "+r.page_content+ "\n-------------\n"
             if 'Name/Company' in r.metadata:
                 company_name=r.metadata['Name/Company']
-            print(company_name)
+            
         return context,company_name
 
 
@@ -293,6 +293,7 @@ class CompartiveAnalysis:
     def predict(self,query):
         
         all_context=self.do_search(query)
+        print(all_context)
         context,_=self.make_context(all_context)
         history=self.convert_to_string(self.chat_history)
         out=self.info_extractor(context,query,history)
