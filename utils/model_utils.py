@@ -131,11 +131,11 @@ class LLMmodelV1:
         self.rag_chain=self.custom_rag_prompt | self.llm
         
     def _set_vdb(self,name):
-        if name!=self.last_idx:
-            self.vectordb=Chroma(embedding_function=self.embeddings,persist_directory=name)
-            self.retriver=self.vectordb.as_retriever(search_kwargs={'k':10})
-            self.last_idx=name
-            self._set_chat_history()
+        #if name!=self.last_idx:
+        self.vectordb=Chroma(embedding_function=self.embeddings,persist_directory=name)
+        self.retriver=self.vectordb.as_retriever(search_kwargs={'k':10})
+        self.last_idx=name
+        self._set_chat_history()
             
         
     
