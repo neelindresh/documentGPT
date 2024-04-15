@@ -180,8 +180,11 @@ class LLMmodelV1:
                 
         print(info_list)
         return {
-            "responce":responce.content,
-            "info":info_list,
+            "output":responce.content,
+            "metadata":{
+                "sources":info_list,
+                
+            },
             "followup":followup_qa.content.split('\n')
         }
         
