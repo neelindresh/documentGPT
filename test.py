@@ -1,10 +1,13 @@
 
 import requests
 
-url = 'http://20.41.249.147:6061/uploadfile/TEST123'
-#url = 'http://127.0.0.1:8000/uploadfile/COMP123'
-file = {'file': open('TATA STEELS 3qfy24-transcript-v7.pdf', 'rb')}
-resp = requests.post(url=url, files=file,json={"vector":False}) 
+#url = 'http://20.41.249.147:6061/uploadfile/TEST123'
+#url = 'https://ikegai.southindia.cloudapp.azure.com/agent/uploadfile/TEST123'
+
+url='http://127.0.0.1:6069/agent/uploadfile/TEST123'
+#file = {'file': open('Profile.pdf', 'rb')}
+file=[('file',open('Profile.pdf', 'rb')),('file',open('HPCL’s Q4.pdf', 'rb'))]
+resp = requests.post(url=url, files=file) 
 print(resp.json())
 
 '''
