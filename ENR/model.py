@@ -34,7 +34,7 @@ class ENR_Chat:
         self.client= chromadb.HttpClient(**asdict(ChromaClient()))
         self.class_chain=regclassificationChatTemplate|azureopenai
         self.tender_chain=chatTemplate|azureopenai
-        self.regulation_chain=regclassificationChatTemplate|azureopenai
+        self.regulation_chain=regulationChatTemplate |azureopenai
         
         tender_db=Chroma(embedding_function=self.embeddings,client=self.client,persist_directory="VectorDB",collection_name=VECTOR_DBS['tender'])
         self.tender_db=tender_db.as_retriever()
