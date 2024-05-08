@@ -14,6 +14,11 @@ from dataclasses import asdict
 
 from config import AzureDocumentInfo
 
+from ENR.model import ENR_Chat
+
+
+
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -31,6 +36,11 @@ vectorizer=ConvertToVector("intfloat/e5-base-v2",azure_form)
 model=LLMmodelV1(embeddings=emd_name,db_name=os.path.join(vectordb_store_path,'DUMMY'))
 
 comarative_analysis=CompartiveAnalysis(embeddings=emd_name,db_name="CompetetorRagV1")
+
+
+enr_chat_model=ENR_Chat()
+
+
 @app.post("/uploadfile/{idx}")
 async def create_upload_file(file: UploadFile,idx:str):
     
@@ -76,4 +86,9 @@ async def dowload(filename:str):
 async def getcomparative(query:dict):
     
     out=comarative_analysis.predict(query['query'])
+    return out
+
+@app.post('/tenderanalysis/')
+async def tenderanalysis(query:dict):
+    out=enr_chat_model.predict(query['query'])
     return out
