@@ -6,7 +6,7 @@ url = 'https://ikegai.southindia.cloudapp.azure.com/agent/uploadfile/TEST123'
 
 #url='http://127.0.0.1:6069/agent/uploadfile/TEST123'
 #file = {'file': open('Profile.pdf', 'rb')}
-file=[('file',open('Profile.pdf', 'rb')),('file',open('HPCL’s Q4.pdf', 'rb'))]
+file=[('file',open('SECI000126-3219607-RfSfor1000MW-FDRE-V-finalupload.pdf', 'rb')),('file',open('175-Notification.pdf', 'rb'))]
 resp = requests.post(url=url, files=file) 
 print(resp.json())
 
