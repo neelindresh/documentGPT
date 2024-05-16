@@ -15,7 +15,7 @@ from dataclasses import asdict
 from config import AzureDocumentInfo
 
 from ENR.model import ENR_Chat
-
+from AdvanceRag.model import CompartiveAnalysisAdvancedRag
 
 
 
@@ -39,6 +39,8 @@ comarative_analysis=CompartiveAnalysis(embeddings=emd_name,db_name="CompetetorRa
 
 
 enr_chat_model=ENR_Chat()
+
+advanced_rag=CompartiveAnalysisAdvancedRag("mixedbread-ai/mxbai-embed-large-v1")
 
 
 @app.post("/uploadfile/{idx}")
@@ -91,4 +93,10 @@ async def getcomparative(query:dict):
 @app.post('/tenderanalysis/')
 async def tenderanalysis(query:dict):
     out=enr_chat_model.predict(query['query'])
+    return out
+
+@app.post("/compartiveanalysis")
+async def getcomparativeadvanrag(query:dict):
+    
+    out=advanced_rag.predict(query['query'])
     return out
