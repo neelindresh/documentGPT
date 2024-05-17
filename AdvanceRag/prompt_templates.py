@@ -44,7 +44,6 @@ reranking_template='''Relevance measures how well the Context addresses the main
             -------------
             {chat_history}
             
-            
             Context
             -------------
             {context}
@@ -58,8 +57,8 @@ reranking_template='''Relevance measures how well the Context addresses the main
 
 
 rag_template=system_prompt='''Use the following pieces of context to answer the question at the end.
-            If you don't know the answer, just say that you don't know, don't try to make up an answer.
-            Use three sentences maximum and keep the answer as concise as possible.
+            If you don't know the answer, just say that you don't know, don't try to make up an answer. 
+            Be as detailed as possible
             
             Previous Conversations
             -------------
