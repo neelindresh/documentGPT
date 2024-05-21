@@ -159,7 +159,7 @@ class ENR_multiroute_Chat:
     
     
     def get_summary(self,query):
-        answer=self.azureopenai.invoke(f"Does the user want a index or summary of the whole document, or all sections of the document? \n user query: {query} \n Answer in only 'Yes' or 'No'")
+        answer=self.azureopenai_gpt_4.invoke(f"Does the user want a index or summary of the whole document, or all sections of the document? \n user query: {query} \n Answer in only 'Yes' or 'No'")
         if answer.content.lower()=="yes":
             return self.TENDER_SUMMARY_INDEX
         else:
