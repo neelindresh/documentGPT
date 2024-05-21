@@ -18,7 +18,6 @@ from pydantic import BaseModel, Field
 from typing import List,Literal
 import os
 import pandas as pd
-from IPython.display import Markdown as md
 import fitz
 from tqdm import tqdm
 
