@@ -181,12 +181,14 @@ class ENR_multiroute_Chat:
         Input: Can you give me a summary of QUALIFICATION REQUIRMENTS FOR BIDDER
         Output: No
         
+        Input: Can you give me a summary of how the project should be designed for interconnection with the ISTS
+        Output: No
         
         
         user query: {query}
         Answer in only 'Yes' or 'No'
         '''
-        answer=self.azureopenai.invoke()
+        answer=self.azureopenai.invoke(template)
         print("-------->",answer.content)
         if answer.content.lower()=="yes":
             return self.TENDER_SUMMARY_INDEX
