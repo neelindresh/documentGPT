@@ -1,12 +1,16 @@
 
 import requests
 
-#url = 'http://20.41.249.147:6061/uploadfile/TEST123'
-url = 'https://ikegai.southindia.cloudapp.azure.com/agent/uploadfile/MULTI123'
+url = 'http://20.41.249.147:6061/uploadfile/TEST123'
+#url = 'https://ikegai.southindia.cloudapp.azure.com/agent/uploadfile/TSS123'
 
 #url='http://127.0.0.1:6069/agent/uploadfile/TEST123'
 #file = {'file': open('Profile.pdf', 'rb')}
-file=[('file',open('table.pdf', 'rb'))]
+file=[('file',open('TSVSJSW/2qfy24-press-release.pdf', 'rb')),
+      ('file',open('TSVSJSW/JSW Press-Release-Q3-FY24.pdf', 'rb')),
+      ('file',open('TSVSJSW/Press-Release-Q2FY-24.pdf', 'rb')),
+      ('file',open('TSVSJSW/TSL 3qfy24-press-release.pdf', 'rb')),
+    ]
 resp = requests.post(url=url, files=file) 
 print(resp.json())
 

@@ -76,7 +76,7 @@ chatTemplate=PromptTemplate(
 regulation_prompt='''
 You are a helpful assitant who is master in tender analysis.
 
-Given the content, please provide the answer to the user queryas good as possible
+Given the content, please provide the answer to the user query as good as possible
 
 Previous Chat History
 ---------

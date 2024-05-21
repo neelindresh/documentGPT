@@ -15,6 +15,7 @@ from dataclasses import asdict
 from config import AzureDocumentInfo
 
 from ENR.model import ENR_Chat
+from ENR.multi_route_model import ENR_multiroute_Chat
 from AdvanceRag.model import CompartiveAnalysisAdvancedRag
 
 
@@ -38,7 +39,7 @@ model=LLMmodelV1(embeddings=emd_name,db_name=os.path.join(vectordb_store_path,'D
 comarative_analysis=CompartiveAnalysis(embeddings=emd_name,db_name="CompetetorRagV1")
 
 
-enr_chat_model=ENR_Chat()
+enr_chat_model=ENR_multiroute_Chat()
 
 advanced_rag=CompartiveAnalysisAdvancedRag("mixedbread-ai/mxbai-embed-large-v1")
 

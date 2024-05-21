@@ -8,6 +8,14 @@ class OpenAIConfig:
     api_version:str="2024-02-15-preview"
 
 @dataclass
+class OpenAI4:
+    azure_endpoint:str="https://lh-openai-4.openai.azure.com/"
+    api_key:str="04030134596b4df3b7cceb3c77f5b0a9"
+    azure_deployment:str="LH-GPT4"
+    api_version:str="2024-02-01"
+
+
+@dataclass
 class AzureDocumentInfo:
     api_key:str='f8c8e2179f44484c872de1bd373c17c0'
     end_point:str='https://spendanalytics.cognitiveservices.azure.com/'
