@@ -160,7 +160,33 @@ class ENR_multiroute_Chat:
     
     def get_summary(self,query):
         print("IS FULL?")
-        answer=self.azureopenai_gpt_4.invoke(f"Does the user want a index or summary of the whole document, or all sections of the document? \n user query: {query} \n Answer in only 'Yes' or 'No'")
+        template=f'''Does the user want a index or summary of the whole document, or all sections of the document?
+        Examples:
+        --------------
+        Input: Can you give me a section wise summary of Tender 0
+        Output: Yes
+        
+        Input: Can you give me a section wise summary of Tender 0
+        Output: Yes
+        
+        Input: Can you summarize the Sections of the rfs
+        Output: yes
+
+        Input: Can you give the list of sections in the document?
+        Output: yes
+        
+        Input: Can you give me a summary of Section 7.4 from Tender 0?
+        Output: No
+        
+        Input: Can you give me a summary of QUALIFICATION REQUIRMENTS FOR BIDDER
+        Output: No
+        
+        
+        
+        user query: {query}
+        Answer in only 'Yes' or 'No'
+        '''
+        answer=self.azureopenai.invoke()
         print("-------->",answer.content)
         if answer.content.lower()=="yes":
             return self.TENDER_SUMMARY_INDEX
