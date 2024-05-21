@@ -268,7 +268,7 @@ class ENR_multiroute_Chat:
         else:
             self.chat_history.add_user_message(query)
             self.chat_history.add_ai_message(self.brain_responce)
-            template=f'Given the  Question: {query} \n Responce {responce}. Give me 3 related questions on this'
+            template=f'Given the  Question: {query} \n Responce {self.brain_responce}. Give me 3 related questions on this'
             followup_qa=self.azureopenai.invoke(template)
             return  {
                 "output":self.brain_responce,
