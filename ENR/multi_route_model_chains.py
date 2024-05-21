@@ -28,7 +28,7 @@ from chromadb.config import Settings
 def router_chain(llm):
 
     prompt='''
-    Given a user query, Classify it into Either `Regulation`, `Tender`, `Summary`, `OpenTender`, `Other`
+    Given a user query, Classify it into Either `Regulation`, `Tender`, `Summary`, `OpenTender`
 
     // Regulation: If the user query is related to regulations
     // Tender: If it is related to the Tender documents or a general question where user is asking applied regulations
@@ -107,7 +107,7 @@ def router_chain(llm):
 def tender_chat(llm):
     tender_chat_prompt='''You are a helpful assitant who is master in tender analysis.
 
-    Given the content, please provide the answer to the user query as good as possible
+    Given the content, please provide the answer to the user query as good as possible. Please provide as much details as possible
 
     Summarized information
     ---------
