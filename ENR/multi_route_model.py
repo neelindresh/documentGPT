@@ -191,7 +191,7 @@ class ENR_multiroute_Chat:
         answer=self.azureopenai.invoke(template)
         print("-------->",answer.content)
         if answer.content.lower()=="yes":
-            return self.TENDER_SUMMARY_INDEX
+            return self.TENDER_SUMMARY_INDEX,[]
         else:
             summary_db=Chroma(embedding_function=self.embeddings,client=self.client,persist_directory="VectorDB",collection_name=self.VECTOR_DBS['summary'])
             summary_retriver=summary_db.as_retriever()
