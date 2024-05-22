@@ -9,7 +9,7 @@ import pandas as pd
 from langchain.memory import ChatMessageHistory
 from config import ChromaClient,OpenAIConfig,ChromaClientDEV,OpenAI4
 from ENR.multi_route_model_chains import router_chain,metafinder,regulation_chat,tender_chat, tender_regulation_miner,get_agent_brain
-
+from ENR.temp_data_model import Elibility_criteria
 '''
 __import__('pysqlite3')
 import sys
@@ -232,6 +232,20 @@ class ENR_multiroute_Chat:
         return out.content
     def predict(self,query):
         print("Enter Brain Agent")
+        
+        if query.lower().strip().strip("?")=="Tell me about the eligibility criteria detailed in this tender".lower().strip():
+            template=f'Given the  Question: {query} \n Responce {Elibility_criteria}. Give me 3 related questions on this'
+            followup_qa=self.azureopenai.invoke(template)
+            return  {
+                "output":Elibility_criteria,
+                "metadata":{
+                    "sources":self.last_info,
+                    
+                },
+                "followup":followup_qa.content.split('\n')
+            }
+            
+            
         self.brain_responce=self.get_agent_chain(query,self.chat_history)
         print("---->",self.brain_responce)
         if self.brain_responce.lower()=='no':
