@@ -178,7 +178,7 @@ class TATAVSJSWModel:
             }
         elif route.lower()=="index":
             context=RETURN_INDEX
-            template=f'Given the context \n{context[:-10000]} \n and Question: {query} . Give me 3 related questions on this'
+            template=f'Given the context \n{context[:-7000]} \n and Question: {query} . Give me 3 related questions on this'
             followup_qa=self.azureopenai.invoke(template)
             return {
                 "output":context,
