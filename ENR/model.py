@@ -65,6 +65,7 @@ class ENR_Chat:
                 "chat_history": self.convert_to_string(self.chat_history)
             })
         elif classification.content=="Regulation":
+  
             print("Regulation")
             reg_results=self.regulation_db.invoke(query)
             context="\n  ".join([d.page_content for d in reg_results])

@@ -28,6 +28,9 @@ def router_chain(llm):
     Input: Give me the comparative summary of the KPIs for Tata Steel and JSW
     Output: Index
     
+    Input: can you please provide an in depth analysis on the crude steel capacity of tata steel and their further expansion plans
+    Output: QA
+    
     
     
 
@@ -152,7 +155,14 @@ class TATAVSJSWModel:
                 "followup":followup_qa.content.split('\n')
             }
         else:
-            return "Please rephase the QS"
+            return {
+                "output":"Can you please Rephrase the Question?",
+                "metadata":{
+                    "sources":[],
+                    
+                },
+                "followup":followup_qa.content.split('\n')
+            }
         
         
         

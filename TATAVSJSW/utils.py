@@ -17,7 +17,7 @@ import numpy as np
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from FlagEmbedding import FlagReranker
 from config import ChromaClient
-MAX_TOKEN_CONTEXT_LIMIT=16000
+MAX_TOKEN_CONTEXT_LIMIT=7000
 
 EMBEDDING="mixedbread-ai/mxbai-embed-large-v1"
 RERANKER_MODEL='BAAI/bge-reranker-base'
