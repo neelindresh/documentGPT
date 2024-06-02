@@ -11,7 +11,7 @@ from langchain.memory import ChatMessageHistory
 from dataclasses import asdict
 import numpy as np
 from utils.mongoutils import MongoConnect
-
+from index import RETURN_INDEX
 MAX_TOKEN_CONTEXT_LIMIT=5000
 
 def router_chain(llm):
@@ -28,12 +28,46 @@ def router_chain(llm):
     Input: Give me the comparative summary of the KPIs for Tata Steel and JSW
     Output: Index
     
+    Input: Give me the comparative View of the All the KPIs for Tata Steel and JSW
+    Output: Index
+    
     Input: can you please provide an in depth analysis on the crude steel capacity of tata steel and their further expansion plans
     Output: QA
     
-    
-    
+    Input: can you please provide an in depth analysis of the M.Cap. of tata steel?
+    Output: QA
 
+    Input: can you please provide an in depth analysis on the crude steel capacity of tata steel and their further expansion plans
+    Output: QA
+
+    Input: can you please provide an in depth analysis on the market share of tata steel and their breakup in domestic and international sales
+    Output: QA
+
+    Input: can you provide the start date and the expected completion date for the capex projects of Tata Steel
+    Output: QA
+
+    Input: Can you provide the EBITDA of Tata Steel for different quarters(Q) and fiscal years (FY)?
+    Output: QA
+
+    Input: Can you provide insights on the sales of JSW steel in tons?
+    Output: QA
+
+    Input: Can you provide insights on the sales growth of JSW steel?
+    Output: QA
+
+    Input: Can you provide insights on JSW steels plans and planned initiatives for growing their sales?
+    Output: QA
+
+    Input: What are the primary factors driving revenue growth for Tata Steel for FY2022-23 and FY2021-22?What is the reason behind revenue growth for JSW Steel for FY2022-23 and FY2021-22?Can you provide a comparison of the reasons for revenue growth of JSW Steel and Tata steel for FY2022-23 and FY2021-22?
+    Output: QA
+
+    Input: How is the financial performance and trends of Tata steel as compared to JSW? Give the answer in a table format
+    Output: QA
+
+    Input: What are the primary factors driving revenue growth for Tata Steel for FY2022-23 and FY2021-22?
+    Output: QA
+    
+    
     Input: {query}
     Output: 
     '''
@@ -143,11 +177,11 @@ class TATAVSJSWModel:
                 "followup":followup_qa.content.split('\n')
             }
         elif route.lower()=="index":
-            context=""
+            context=RETURN_INDEX
             template=f'Given the context \n{context} \n and Question: {query} . Give me 3 related questions on this'
             followup_qa=self.azureopenai.invoke(template)
             return {
-                "output":responce.content,
+                "output":context,
                 "metadata":{
                     "sources":[],
                     
