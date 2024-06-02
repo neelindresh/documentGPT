@@ -30,3 +30,10 @@ class ChromaClient:
 class ChromaClientDEV:
     host:str="http://52.172.103.119:6062"
     port:int=8000
+    
+    
+@dataclass
+class UseCaseMongo:
+    uri:str = "mongodb+srv://ikegai:ikegai%40123456@cluster0.l2apier.mongodb.net"
+    collection:str='usecases'
+    db:str='ikegai_dev'

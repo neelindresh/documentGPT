@@ -18,7 +18,7 @@ from ENR.model import ENR_Chat
 from ENR.multi_route_model import ENR_multiroute_Chat
 from AdvanceRag.model import CompartiveAnalysisAdvancedRag
 
-
+from TATAVSJSW.model import TATAVSJSWModel
 
 app = FastAPI()
 app.add_middleware(
@@ -43,6 +43,7 @@ enr_chat_model=ENR_multiroute_Chat()
 
 advanced_rag=CompartiveAnalysisAdvancedRag("mixedbread-ai/mxbai-embed-large-v1")
 
+tatavsjsw=TATAVSJSWModel(usecase_id="1717087491223")
 
 @app.post("/uploadfile/{idx}")
 async def create_upload_file(file: UploadFile,idx:str):
@@ -101,3 +102,9 @@ async def getcomparativeadvanrag(query:dict):
     
     out=advanced_rag.predict(query['query'])
     return out
+
+@app.post("/tatavsjsw")
+async def tatavsjswcomparative(query:dict):
+    out=tatavsjsw.predict(query['query'])
+    return out
+    
