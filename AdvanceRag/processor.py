@@ -33,7 +33,7 @@ class Embeddings:
         self.name=name
     def load(self):
         return HuggingFaceEmbeddings(model_name=self.name)
-    
+
     
 class DocumentProcessor:
     def __init__(self,pdf_path,end_point,api_key):
