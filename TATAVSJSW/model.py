@@ -12,7 +12,7 @@ from dataclasses import asdict
 import numpy as np
 from utils.mongoutils import MongoConnect
 
-MAX_TOKEN_CONTEXT_LIMIT=16000
+MAX_TOKEN_CONTEXT_LIMIT=5000
 
 def router_chain(llm):
 
