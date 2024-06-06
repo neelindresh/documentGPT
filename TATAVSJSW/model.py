@@ -202,8 +202,9 @@ class TATAVSJSWModel:
                 "followup":followup_qa.content.split('\n')
             }
         else:
-            route=self.get_pipeline(query)[0]
-            print(route)
+            #route=self.get_pipeline(query)[0]
+            route="qa"
+            #print(route)
             if route.lower()=="qa":
                 output=self.advance_retrival(query,self.data_source["data_sources"])
                 responce=self.rag_chain.invoke({
