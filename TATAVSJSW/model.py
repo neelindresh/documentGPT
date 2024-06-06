@@ -152,6 +152,7 @@ class TATAVSJSWModel:
         return text
     
     def predict(self,query):
+        query=query.strip("?").strip(" ")
         if query=="Give me the comparative summary of the KPMG defined KPIs for Tata Steel and JSW for 2021-2022":
             context=kpmg_2122_res
             template=f'Given the context \n{context[-5000:]} . Give me 3 related questions on this'
