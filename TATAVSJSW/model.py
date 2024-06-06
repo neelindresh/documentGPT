@@ -11,7 +11,7 @@ from langchain.memory import ChatMessageHistory
 from dataclasses import asdict
 import numpy as np
 from utils.mongoutils import MongoConnect
-from TATAVSJSW.index import RETURN_INDEX
+from TATAVSJSW.index import tata_2122_res,tata_2223_res,kpmg_2122_res,kpmg_2223_res,RETURN_INDEX
 MAX_TOKEN_CONTEXT_LIMIT=5000
 
 def router_chain(llm):
@@ -152,32 +152,44 @@ class TATAVSJSWModel:
         return text
     
     def predict(self,query):
-        
-        route=self.get_pipeline(query)[0]
-        print(route)
-        if route.lower()=="qa":
-            output=self.advance_retrival(query,self.data_source["data_sources"])
-            responce=self.rag_chain.invoke({
-                "query":query,
-                "context":output['context'],
-                "chat_history":self.convert_to_string(self.chat_history)
-                
-            })
-            context=output['context']
-            self.chat_history.add_user_message(query)
-            self.chat_history.add_ai_message(responce.content)
-            template=f'Given the context \n{context} \n and Question: {query} \n Responce {responce.content}. Give me 3 related questions on this'
+        if query=="Give me the comparative summary of the KPMG defined KPIs for Tata Steel and JSW for 2021-2022":
+            context=kpmg_2122_res
+            template=f'Given the context \n{context[-5000:]} . Give me 3 related questions on this'
             followup_qa=self.azureopenai.invoke(template)
-            return  {
-                "output":responce.content,
+            return {
+                "output":context,
                 "metadata":{
-                    "sources":output['info_list'],
+                    "sources":[],
                     
                 },
                 "followup":followup_qa.content.split('\n')
             }
-        elif route.lower()=="index":
-            context=RETURN_INDEX
+        elif query=="Give me the comparative summary of the KPMG defined KPIs for Tata Steel and JSW for 2022-2023":
+            context=kpmg_2223_res
+            template=f'Given the context \n{context[-5000:]} . Give me 3 related questions on this'
+            followup_qa=self.azureopenai.invoke(template)
+            return {
+                "output":context,
+                "metadata":{
+                    "sources":[],
+                    
+                },
+                "followup":followup_qa.content.split('\n')
+            }
+        elif query=="Give me the comparative summary of the Tata Steel defined KPIs for Tata Steel and JSW for 2021-2022":
+            context=tata_2122_res
+            template=f'Given the context \n{context[-5000:]} . Give me 3 related questions on this'
+            followup_qa=self.azureopenai.invoke(template)
+            return {
+                "output":context,
+                "metadata":{
+                    "sources":[],
+                    
+                },
+                "followup":followup_qa.content.split('\n')
+            }
+        elif query=="Give me the comparative summary of the Tata Steel defined KPIs for Tata Steel and JSW for 2022-2023":
+            context=tata_2223_res
             template=f'Given the context \n{context[-5000:]} . Give me 3 related questions on this'
             followup_qa=self.azureopenai.invoke(template)
             return {
@@ -189,14 +201,52 @@ class TATAVSJSWModel:
                 "followup":followup_qa.content.split('\n')
             }
         else:
-            return {
-                "output":"Can you please Rephrase the Question?",
-                "metadata":{
-                    "sources":[],
+            route=self.get_pipeline(query)[0]
+            print(route)
+            if route.lower()=="qa":
+                output=self.advance_retrival(query,self.data_source["data_sources"])
+                responce=self.rag_chain.invoke({
+                    "query":query,
+                    "context":output['context'],
+                    "chat_history":self.convert_to_string(self.chat_history)
                     
-                },
-                "followup":followup_qa.content.split('\n')
-            }
-        
+                })
+                context=output['context']
+                self.chat_history.add_user_message(query)
+                self.chat_history.add_ai_message(responce.content)
+                template=f'Given the context \n{context} \n and Question: {query} \n Responce {responce.content}. Give me 3 related questions on this'
+                followup_qa=self.azureopenai.invoke(template)
+                return  {
+                    "output":responce.content,
+                    "metadata":{
+                        "sources":output['info_list'],
+                        
+                    },
+                    "followup":followup_qa.content.split('\n')
+                }
+            elif route.lower()=="index":
+                context=RETURN_INDEX
+                template=f'Given the context \n{context[-5000:]} . Give me 3 related questions on this'
+                followup_qa=self.azureopenai.invoke(template)
+                return {
+                    "output":context,
+                    "metadata":{
+                        "sources":[],
+                        
+                    },
+                    "followup":followup_qa.content.split('\n')
+                }
+            
+        template=f'Given the question {query} . Give me 3 related questions on this'
+        followup_qa=self.azureopenai.invoke(template)
+        return {
+            "output":"Can you please Rephrase the Question?",
+            "metadata":{
+                "sources":[],
+                
+            },
+            "followup":followup_qa.content.split('\n')
+        }
+            
         
         
